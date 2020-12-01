@@ -17,13 +17,13 @@ fn main() {
         	println!("Input file is empty");
         	process::exit(0);
     	}
-	if let Some((entry_1, entry_2)) = compute::get_two_entries_that_sum(v.clone(), 2020) {
+	if let Some((entry_1, entry_2)) = compute::get_two_entries_that_sum(&v, 2020) {
 		println!("Found tuple ({}, {})", entry_1, entry_2);
 		println!("The result of the multiplication is {}", entry_1 * entry_2);
 	} else {
 		println!("No entries found");
 	}
-	if let Some((entry_1, entry_2, entry_3)) = compute::get_three_entries_that_sum(v, 2020) {
+	if let Some((entry_1, entry_2, entry_3)) = compute::get_three_entries_that_sum(&v, 2020) {
 		println!("Found tuple ({}, {}, {})", entry_1, entry_2, entry_3);
 		println!("The result of the multiplication is {}", entry_1 * entry_2 * entry_3);
 	} else {

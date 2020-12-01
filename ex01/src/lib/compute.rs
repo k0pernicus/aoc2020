@@ -1,4 +1,4 @@
-pub fn get_two_entries_that_sum(entries: Vec<i32>, sum_to_have: i32) -> Option<(i32, i32)> {
+pub fn get_two_entries_that_sum(entries: &Vec<i32>, sum_to_have: i32) -> Option<(i32, i32)> {
 	if entries.len() == 0 {
 		return None;
 	}
@@ -13,7 +13,7 @@ pub fn get_two_entries_that_sum(entries: Vec<i32>, sum_to_have: i32) -> Option<(
 	return None;
 }
 
-pub fn get_three_entries_that_sum(entries: Vec<i32>, sum_to_have: i32) -> Option<(i32, i32, i32)> {
+pub fn get_three_entries_that_sum(entries: &Vec<i32>, sum_to_have: i32) -> Option<(i32, i32, i32)> {
 	if entries.len() == 0 {
 		return None;
 	}

@@ -1,10 +1,11 @@
+use aoc_helper::string;
 use std::collections::BTreeMap;
 
 type Range = (u32, u32);
 
 fn parse_password_policy<'a>(s: &'a str) -> Option<(Range, char)> {
     let sanitized_s = s.trim_end();
-    let s_split = s.split_ascii_whitespace().collect::<Vec<&str>>();
+    let s_split = sanitized_s.split_ascii_whitespace().collect::<Vec<&str>>();
     if s_split.len() != 2 {
         println!("Found more than two patterns in {}...", s);
         return None;
@@ -16,22 +17,6 @@ fn parse_password_policy<'a>(s: &'a str) -> Option<(Range, char)> {
         .collect::<Vec<u32>>();
     let char: char = s_split[1].trim_start().chars().collect::<Vec<char>>()[0];
     return Some(((range[0], range[1]), char));
-}
-
-fn get_char_occurences_in_str<'a>(s: &'a str) -> BTreeMap<char, u32> {
-    let mut count: BTreeMap<char, u32> = BTreeMap::new();
-    for c in s.chars() {
-        *count.entry(c).or_insert(0) += 1;
-    }
-    return count;
-}
-
-fn get_char_indexes_in_str<'a>(s: &'a str) -> BTreeMap<char, Vec<usize>> {
-    let mut indexes: BTreeMap<char, Vec<usize>> = BTreeMap::new();
-    for (index, c) in s.chars().enumerate() {
-        indexes.entry(c).or_insert(Vec::new()).push(index);
-    }
-    return indexes;
 }
 
 pub fn compute_nb_of_valid_passwords_part_1(v: &Vec<String>) -> u32 {
@@ -51,7 +36,8 @@ pub fn compute_nb_of_valid_passwords_part_1(v: &Vec<String>) -> u32 {
         if let Some((password_policy_range, password_policy_char)) =
             parse_password_policy(l_split[0])
         {
-            let char_occurences: BTreeMap<char, u32> = get_char_occurences_in_str(l_split[1]);
+            let char_occurences: BTreeMap<char, u32> =
+                string::map_char_occurences(l_split[1], false);
             if !char_occurences.contains_key(&password_policy_char) {
                 continue;
             }
@@ -83,7 +69,8 @@ pub fn compute_nb_of_valid_passwords_part_2(v: &Vec<String>) -> u32 {
         if let Some((password_policy_range, password_policy_char)) =
             parse_password_policy(l_split[0])
         {
-            let char_indexes: BTreeMap<char, Vec<usize>> = get_char_indexes_in_str(l_split[1]);
+            let char_indexes: BTreeMap<char, Vec<usize>> =
+                string::map_char_indexes(l_split[1], false);
             if !char_indexes.contains_key(&password_policy_char) {
                 println!("{} has not been found in the map", password_policy_char);
                 continue;

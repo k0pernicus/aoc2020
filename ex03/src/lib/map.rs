@@ -29,6 +29,7 @@ impl fmt::Display for MapItem {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum Direction {
     Up,
     Right,
@@ -92,10 +93,7 @@ pub struct MapMetadata {
 
 impl MapMetadata {
     pub fn new(height: u32, width: u32) -> MapMetadata {
-        MapMetadata {
-            height: height,
-            width: width,
-        }
+        MapMetadata { height, width }
     }
 }
 

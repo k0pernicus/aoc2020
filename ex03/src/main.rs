@@ -50,14 +50,16 @@ fn main() {
     for slop in slops.iter() {
         let encountered_items =
             map::compute_encountered_items_in_map(&start_point, &slop, &map, &map_metadata, None);
-        println!("* for slop {:?}", slop);
+        println!("* slop {:?}", slop);
         for (k, v) in encountered_items.iter() {
-            println!("* encountered item '{}' {} times", k, v);
+            println!("\t> encountered '{}' {} times", k, v);
         }
         tree_items_mul *= encountered_items[&map::MapItem::Tree];
     }
+    println!("****************");
     println!(
-        "The total number of trees (multiplied) is {}",
+        "The total number of '{}' (multiplied) is {}",
+        map::MapItem::Tree,
         tree_items_mul
     );
 }

@@ -24,17 +24,6 @@ fn main() {
     }
     let map_metadata = map::MapMetadata::new(map.len() as u32, map[0].len() as u32);
     let start_point = map::Coordinates(0, 0);
-    let fst_slop = map::SlopeDirection::new(map::Direction::Right, 3);
-    let snd_slop = map::SlopeDirection::new(map::Direction::Down, 1);
-    let slop = map::Slope::new(fst_slop, snd_slop);
-    let encountered_items =
-        map::compute_encountered_items_in_map(&start_point, &slop, &map, &map_metadata, None);
-    println!("First part solution...");
-    for (k, v) in encountered_items.iter() {
-        println!("* encountered item '{}' {} times", k, v);
-    }
-
-    println!("Second part solution...");
     let slops = [
         map::Slope::new(
             map::SlopeDirection::new(map::Direction::Right, 1),

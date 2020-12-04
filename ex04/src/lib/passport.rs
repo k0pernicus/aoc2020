@@ -5,48 +5,26 @@ use std::str;
 
 #[derive(Debug)]
 pub struct Passport {
-    ID: Option<String>,
-    birthYear: Option<String>,
-    issueYear: Option<u32>,
-    expirationYear: Option<u32>,
+    id: Option<String>,
+    birth_year: Option<String>,
+    issue_year: Option<u32>,
+    expiration_year: Option<u32>,
     height: Option<String>,
-    hairColor: Option<String>,
-    eyeColor: Option<String>,
-    countryID: Option<String>,
+    hair_color: Option<String>,
+    eye_color: Option<String>,
+    country_id: Option<String>,
 }
 
 impl Passport {
-    pub fn new(
-        ID: Option<String>,
-        birthYear: Option<String>,
-        issueYear: Option<u32>,
-        expirationYear: Option<u32>,
-        height: Option<String>,
-        hairColor: Option<String>,
-        eyeColor: Option<String>,
-        countryID: Option<String>,
-    ) -> Passport {
-        Passport {
-            ID,
-            birthYear,
-            issueYear,
-            expirationYear,
-            height,
-            hairColor,
-            eyeColor,
-            countryID,
-        }
-    }
-
     /// Check that all entries, except countryID, are set
     pub fn is_valid(&self) -> bool {
-        let is_valid = self.ID.is_some()
-            && self.birthYear.is_some()
-            && self.issueYear.is_some()
-            && self.expirationYear.is_some()
+        let is_valid = self.id.is_some()
+            && self.birth_year.is_some()
+            && self.issue_year.is_some()
+            && self.expiration_year.is_some()
             && self.height.is_some()
-            && self.hairColor.is_some()
-            && self.eyeColor.is_some();
+            && self.hair_color.is_some()
+            && self.eye_color.is_some();
         if is_valid {
             println!("{:?} is valid", self);
         }
@@ -57,14 +35,14 @@ impl Passport {
 impl default::Default for Passport {
     fn default() -> Self {
         Passport {
-            ID: None,
-            birthYear: None,
-            issueYear: None,
-            expirationYear: None,
+            id: None,
+            birth_year: None,
+            issue_year: None,
+            expiration_year: None,
             height: None,
-            hairColor: None,
-            eyeColor: None,
-            countryID: None,
+            hair_color: None,
+            eye_color: None,
+            country_id: None,
         }
     }
 }
@@ -194,14 +172,14 @@ impl str::FromStr for Passport {
             }
             let (entry_name, entry_value) = (split_entry[0], split_entry[1]);
             match entry_name {
-                "byr" => passport.birthYear = get_birth_year(entry_value),
-                "iyr" => passport.issueYear = get_issue_year(entry_value),
-                "eyr" => passport.expirationYear = get_expiration_year(entry_value),
+                "byr" => passport.birth_year = get_birth_year(entry_value),
+                "iyr" => passport.issue_year = get_issue_year(entry_value),
+                "eyr" => passport.expiration_year = get_expiration_year(entry_value),
                 "hgt" => passport.height = get_height(entry_value),
-                "hcl" => passport.hairColor = get_hair_color(entry_value),
-                "ecl" => passport.eyeColor = get_eye_color(entry_value),
-                "pid" => passport.ID = get_passport_id(entry_value),
-                "cid" => passport.countryID = Some(String::from(entry_value)),
+                "hcl" => passport.hair_color = get_hair_color(entry_value),
+                "ecl" => passport.eye_color = get_eye_color(entry_value),
+                "pid" => passport.id = get_passport_id(entry_value),
+                "cid" => passport.country_id = Some(String::from(entry_value)),
                 _ => println!("Unknown entry {}", entry_name),
             }
         }

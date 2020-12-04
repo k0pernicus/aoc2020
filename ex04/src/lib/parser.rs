@@ -1,7 +1,7 @@
 use super::passport::Passport;
 use std::str::FromStr;
 
-pub fn parse(lines: &Vec<String>) -> Vec<Passport> {
+pub fn parse(lines: Vec<String>) -> Vec<Passport> {
     let mut c_line = 0;
     let nb_lines = lines.len();
     let mut passports = Vec::new();

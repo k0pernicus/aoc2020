@@ -17,7 +17,8 @@ fn main() {
         println!("Input file is empty");
         process::exit(0);
     }
-    let passports = parser::parse(&v);
+    // Pass v to parse, as we don't care about this structure after
+    let passports = parser::parse(v);
     let nb_valid_passports = passports
         .iter()
         .filter_map(|p| {

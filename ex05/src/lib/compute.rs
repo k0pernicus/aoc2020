@@ -71,8 +71,8 @@ pub fn get_plane_row(
     Some(PlanePosition(row.0, position.1))
 }
 
-pub fn get_seat_id(plane_position: &PlanePosition) -> u32 {
-    plane_position.0 * 8 + plane_position.1
+pub fn get_seat_id(plane_position: &PlanePosition, row_length: u32) -> u32 {
+    plane_position.0 * row_length + plane_position.1
 }
 
 /// get_missing_seat_id assumes that seat_ids is already sorted!

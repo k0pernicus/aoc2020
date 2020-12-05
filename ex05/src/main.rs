@@ -36,7 +36,7 @@ fn main() {
                 indication.as_str(),
             )
             .unwrap_or(PlanePosition(0, 0));
-            return compute::get_seat_id(&plane_position);
+            return compute::get_seat_id(&plane_position, 8u32);
         })
         .collect::<Vec<u32>>();
     let max_seat_it = seat_ids.iter().max();

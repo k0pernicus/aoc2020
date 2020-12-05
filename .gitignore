@@ -1,5 +1,6 @@
 Cargo.lock
 target
 input
+test_input
 output
 tests

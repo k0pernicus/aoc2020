@@ -1,6 +1,5 @@
 Cargo.lock
 target
-input
-test_input
-output
-tests
+input*
+test_input*
+outout

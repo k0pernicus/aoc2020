@@ -9,6 +9,8 @@ use std::process;
 mod lib;
 use lib::parser;
 
+const BAG_NAME: &'static str = "shiny gold";
+
 fn main() {
     let app = commandline::AOCApp::new("ex07", "0.1.0", "k0pernicus");
     let args = app.build();
@@ -24,11 +26,12 @@ fn main() {
         println!("Input file is empty");
         process::exit(0);
     }
-    let mut bag_rules = parser::parse_file(lines).unwrap();
-    bag_rules.build_predecessors_tree();
-    let parents_of_shiny_gold = bag_rules.find_parent_bags("shiny gold");
+    let bag_rules = parser::parse_file(lines).unwrap();
+    let parents_of_shiny_gold = bag_rules.find_parent_bags(BAG_NAME);
     println!(
         "Number of parents for shiny gold: {}",
         parents_of_shiny_gold.len()
     );
+    let total_nb_bags = bag_rules.compute_sum_contained_nb_bags(BAG_NAME) - 1;
+    println!("The total number of bags to buy is {}", total_nb_bags);
 }

@@ -61,24 +61,22 @@ impl Rules {
         let mut queue = VecDeque::new();
         queue.push_back(bag_name);
         let mut visited = HashSet::new();
-        visited.insert(bag_name);
-        let mut parent_bags = HashSet::new();
+        visited.insert(String::from(bag_name));
         while !queue.is_empty() {
             let c_bag_name = queue.pop_back().unwrap();
             println!("Visiting {}", c_bag_name);
-            if c_bag_name != bag_name {
-                parent_bags.insert(String::from(c_bag_name));
-            }
             if let Some(predecessors) = self.predecessor_tree.get(c_bag_name) {
                 for predecessor in predecessors.iter() {
-                    if visited.contains(predecessor.as_str()) {
+                    if visited.contains(predecessor) {
                         continue;
                     }
-                    visited.insert(predecessor.as_str());
+                    visited.insert(predecessor.clone());
                     queue.push_back(predecessor);
                 }
             }
         }
-        parent_bags
+        // Remove itself
+        visited.remove(bag_name);
+        visited
     }
 }

@@ -64,7 +64,6 @@ impl Rules {
         visited.insert(String::from(bag_name));
         while !queue.is_empty() {
             let c_bag_name = queue.pop_back().unwrap();
-            println!("Visiting {}", c_bag_name);
             if let Some(predecessors) = self.predecessor_tree.get(c_bag_name) {
                 for predecessor in predecessors.iter() {
                     if visited.contains(predecessor) {

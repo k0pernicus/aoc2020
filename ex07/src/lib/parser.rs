@@ -70,14 +70,12 @@ pub fn parse_file(file_content: Vec<String>) -> Result<Rules, ()> {
         if raw_bag_rule.trim().is_empty() {
             continue;
         }
-        println!("Parsing rule '{}'", raw_bag_rule);
         if let Some(bag_rule) = parse_rule(raw_bag_rule) {
             let Rule(bag_name, rule) = bag_rule;
             if hash_map.contains_key(&bag_name) {
                 println!("Error: Duplicate entry {}", bag_name);
                 return Err(());
             }
-            println!("'{} -> {:?}'", bag_name, rule);
             hash_map.insert(bag_name, rule);
         }
     }

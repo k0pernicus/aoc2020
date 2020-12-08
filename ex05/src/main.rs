@@ -1,8 +1,8 @@
 extern crate aoc_helper;
 
 use aoc_helper::{commandline, file};
-use compute::{get_seat_id, PlanePosition};
-use std::{cmp::max, process};
+use compute::PlanePosition;
+use std::process;
 
 mod lib;
 use lib::compute;

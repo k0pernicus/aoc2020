@@ -6,6 +6,11 @@ pub struct VirtualMachine {
     offset: usize,
 }
 
+pub enum VirtualMachineError {
+    DetectedLoop(Vec<usize>),
+    NoneInstruction(),
+}
+
 impl VirtualMachine {
     pub fn new(instructions: Vec<Instruction>) -> VirtualMachine {
         VirtualMachine {
@@ -14,7 +19,7 @@ impl VirtualMachine {
             offset: 0,
         }
     }
-    pub fn run(&mut self) -> Result<i32, Vec<usize>> {
+    pub fn run(&mut self) -> Result<i32, VirtualMachineError> {
         let mut instruction_traces: Vec<usize> = Vec::new();
         loop {
             if self.offset >= self.instructions.len() {
@@ -27,13 +32,13 @@ impl VirtualMachine {
                     "Error: Infinite loop discovered at offset {} - accumulator value {}",
                     self.offset, self.accumulator
                 );
-                return Err(instruction_traces);
+                return Err(VirtualMachineError::DetectedLoop(instruction_traces));
             }
             instruction_traces.push(self.offset);
             let c_instruction = self.instructions.get(self.offset);
             if c_instruction.is_none() {
                 println!("Error: Found a None instruction!");
-                return Err(instruction_traces);
+                return Err(VirtualMachineError::NoneInstruction());
             }
             let instruction = c_instruction.unwrap();
             let operation = instruction.get_operation();

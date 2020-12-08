@@ -25,16 +25,23 @@ fn main() {
     }
     let instructions = parser::parse_raw_instructions(lines);
     let mut virtual_machine = virtual_machine::VirtualMachine::new(instructions);
-    if let Err(instruction_traces) = virtual_machine.run() {
-        println!(
-            "Found a problem - instruction traces: {:?}",
-            instruction_traces
-        );
-        if let None = virtual_machine.debug_instruction(&instruction_traces) {
-            println!("Cannot debug the sequence - bug somewhere :/");
-        } else {
-            println!("Correct sequence found!");
+    match virtual_machine.run() {
+        Ok(accumulator) => {
+            println!("After the run, the accumulator is set to {}", accumulator);
         }
-    }
+        Err(virtual_machine::VirtualMachineError::NoneInstruction()) => {
+            println!("A none instruction has been detected... possibly a parse error, or an error in the input file");
+        }
+        Err(virtual_machine::VirtualMachineError::DetectedLoop(instruction_traces)) => {
+            println!(
+                "Found a problem - instruction traces: {:?} - trying to debug the sequence...",
+                instruction_traces
+            );
+            match virtual_machine.debug_instruction(&instruction_traces) {
+                Some(_) => println!("Correct sequence found!"),
+                None => println!("Cannot debug the sequence - bug somewhere :/"),
+            };
+        }
+    };
     virtual_machine.clean();
 }

@@ -8,4 +8,4 @@ edition = "2018"
 
 [dependencies]
 aoc_helper = { path = "../../aoc_helper", version = "0.1.0" }
-aoc2020_vm = { path = "../../aoc2020_vm", version = "0.1.0" }
+aoc2020_vm = { git = "ssh://git@github.com/k0pernicus/aoc2020_vm.git", rev = "dad2a3c422852fbca36ad901f30d6a60ec698f0b" }

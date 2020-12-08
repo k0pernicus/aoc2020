@@ -1,4 +1,4 @@
-use super::instruction::Instruction;
+use aoc2020_vm::instruction::Instruction;
 use std::str::FromStr;
 
 pub fn parse_raw_instructions(v: Vec<String>) -> Vec<Instruction> {

@@ -1,13 +1,14 @@
 #[macro_use]
 extern crate aoc_helper;
+extern crate aoc2020_vm;
 
+use aoc2020_vm::virtual_machine;
 use aoc_helper::commandline::AOCApp;
 use aoc_helper::file;
 use std::process;
 
 mod lib;
 use lib::parser;
-use lib::virtual_machine;
 
 fn main() {
     let args = get_app_args!();

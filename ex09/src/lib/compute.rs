@@ -30,15 +30,18 @@ pub fn get_first_non_sum_nb(data: &Vec<u32>, nb_of_preambles: usize) -> Option<(
 // Brute force version!
 pub fn get_invalid_range(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)> {
     let rev_data: Vec<&u32> = data.iter().rev().collect();
+    let mut nb_operations = 0;
     for (index, c_value) in rev_data.clone().into_iter().enumerate() {
         let mut sum = *c_value;
         let mut iterator_index = index;
         loop {
+            nb_operations += 1;
             iterator_index += 1;
             sum += rev_data[iterator_index];
             match sum.cmp(&nb_to_find) {
                 cmp::Ordering::Less => continue,
                 cmp::Ordering::Equal => {
+                    println!("Performed {} operations", nb_operations);
                     let len_data = data.len();
                     return Some((len_data - iterator_index - 1, len_data - index - 1));
                 }

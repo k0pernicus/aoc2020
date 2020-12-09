@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate aoc_helper;
 
 use aoc_helper::commandline::AOCApp;
@@ -8,12 +7,25 @@ use std::process;
 mod lib;
 use lib::compute;
 
-// To change according to the index - test_input.txt == 5, input.txt == 25
-pub const NB_OF_PREAMBLES: usize = 25;
+const DEFAULT_NB_OF_PREAMBLES: &'static str = "25";
 
 fn main() {
-    let args = get_app_args!();
+    let mut app: AOCApp = AOCApp::default();
+    app = app.add_argument(
+        "nb-of-preambles",
+        "nb-of-preambles",
+        "n",
+        false,
+        true,
+        "set the number of preambles for the input file",
+    );
+    let args = app.build();
     let input_filename = args.get_input_filename();
+    let nb_of_preambles = args
+        .get_value_of("nb-of-preambles")
+        .unwrap_or(DEFAULT_NB_OF_PREAMBLES)
+        .parse::<usize>()
+        .unwrap();
 
     let input_content = file::get_content::<u32>(input_filename.unwrap());
     if let Err(error) = input_content {
@@ -25,7 +37,7 @@ fn main() {
         println!("Input file is empty");
         process::exit(0);
     }
-    let first_non_sum_nb = compute::get_first_non_sum_nb(&input, NB_OF_PREAMBLES);
+    let first_non_sum_nb = compute::get_first_non_sum_nb(&input, nb_of_preambles);
     if let None = first_non_sum_nb {
         println!("Error: Cannot find a non-sum number... Mistake in input?");
         process::exit(1);

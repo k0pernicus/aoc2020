@@ -36,7 +36,7 @@ fn main() {
             non_sum_nb, non_sum_nb_index
         );
         let invalid_range =
-            compute::get_invalid_range(&input[..non_sum_nb_index], non_sum_nb).unwrap();
+            compute::get_invalid_range_memoization(&input[..non_sum_nb_index], non_sum_nb).unwrap();
         let data_range = &input[invalid_range.0..invalid_range.1];
         let min_value = data_range.iter().min().unwrap();
         let max_value = data_range.iter().max().unwrap();

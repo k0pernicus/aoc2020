@@ -1,5 +1,5 @@
 use std::cmp;
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 
 fn get_combinations_of_preamble(
     data: &Vec<u32>,
@@ -28,12 +28,14 @@ pub fn get_first_non_sum_nb(data: &Vec<u32>, nb_of_preambles: usize) -> Option<(
 
 // get_invalid_range returns the indexes of the data range that sums the nb_to_find parameter
 // Brute force version!
-pub fn get_invalid_range(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)> {
+#[allow(dead_code)]
+pub fn get_invalid_range_bruteforce(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)> {
     let rev_data: Vec<&u32> = data.iter().rev().collect();
     let mut nb_operations = 0;
     for (index, c_value) in rev_data.clone().into_iter().enumerate() {
         let mut sum = *c_value;
         let mut iterator_index = index;
+        nb_operations += 1;
         loop {
             nb_operations += 1;
             iterator_index += 1;
@@ -46,6 +48,37 @@ pub fn get_invalid_range(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)
                     return Some((len_data - iterator_index - 1, len_data - index - 1));
                 }
                 cmp::Ordering::Greater => break,
+            }
+        }
+    }
+    None
+}
+
+// get_invalid_range_memoization returns the indexes of the data range that sums the nb_to_find parameter
+// Optimized version (x4 less computations)!
+pub fn get_invalid_range_memoization(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)> {
+    let rev_data: Vec<&u32> = data.iter().rev().collect();
+    let mut nb_operations = 0;
+    let mut queue = VecDeque::new();
+    let mut sum = 0;
+    let mut iterator_index = 0;
+    for (index, c_value) in rev_data.clone().into_iter().enumerate() {
+        nb_operations += 1;
+        sum += c_value;
+        queue.push_back(c_value);
+        match sum.cmp(&nb_to_find) {
+            cmp::Ordering::Less => {
+                continue;
+            }
+            cmp::Ordering::Equal => {
+                println!("Performed {} operations", nb_operations);
+                let len_data = data.len();
+                return Some((len_data - index - 1, len_data - iterator_index - 1));
+            }
+            cmp::Ordering::Greater => {
+                sum -= queue.pop_front().unwrap();
+                iterator_index += 1;
+                // Remove the latest one and go on...
             }
         }
     }

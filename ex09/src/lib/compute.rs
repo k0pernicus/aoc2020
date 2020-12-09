@@ -27,6 +27,7 @@ pub fn get_first_non_sum_nb(data: &Vec<u32>, nb_of_preambles: usize) -> Option<(
 }
 
 // get_invalid_range returns the indexes of the data range that sums the nb_to_find parameter
+// Brute force version!
 pub fn get_invalid_range(data: &[u32], nb_to_find: u32) -> Option<(usize, usize)> {
     let rev_data: Vec<&u32> = data.iter().rev().collect();
     for (index, c_value) in rev_data.clone().into_iter().enumerate() {

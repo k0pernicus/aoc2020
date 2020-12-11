@@ -43,45 +43,28 @@ impl Item {
     ) -> Self {
         match method {
             PredictionMethod::SIMPLE => {
-                self.predict_next_position_simple(coordinates, nb_seats_to_check, grid)
+                self.predict(coordinates, nb_seats_to_check, grid, get_nb_adjacent_seats)
             }
-            PredictionMethod::COMPLEX => {
-                self.predict_next_position_complex(coordinates, nb_seats_to_check, grid)
-            }
+            PredictionMethod::COMPLEX => self.predict(
+                coordinates,
+                nb_seats_to_check,
+                grid,
+                get_first_adjacent_seats,
+            ),
         }
     }
 
-    fn predict_next_position_simple(
+    fn predict(
         &self,
         coordinates: (usize, usize),
         nb_seats_to_check: u32,
         grid: &Grid,
+        prediction_fn: fn(&Grid, (usize, usize), Item) -> u32,
     ) -> Self {
-        if *self == Self::EmptySeat
-            && grid.get_nb_adjacent_seats(coordinates, Item::OccupiedSeat) == 0
-        {
+        let nb_occupied_seats = prediction_fn(grid, coordinates, Item::OccupiedSeat);
+        if *self == Self::EmptySeat && nb_occupied_seats == 0 {
             return Self::OccupiedSeat;
-        } else if *self == Self::OccupiedSeat
-            && grid.get_nb_adjacent_seats(coordinates, Item::OccupiedSeat) >= nb_seats_to_check
-        {
-            return Item::EmptySeat;
-        }
-        self.clone()
-    }
-
-    fn predict_next_position_complex(
-        &self,
-        coordinates: (usize, usize),
-        nb_seats_to_check: u32,
-        grid: &Grid,
-    ) -> Self {
-        if *self == Self::EmptySeat
-            && grid.get_first_adjacent_seats(coordinates, Item::OccupiedSeat) == 0
-        {
-            return Self::OccupiedSeat;
-        } else if *self == Self::OccupiedSeat
-            && grid.get_first_adjacent_seats(coordinates, Item::OccupiedSeat) >= nb_seats_to_check
-        {
+        } else if *self == Self::OccupiedSeat && nb_occupied_seats >= nb_seats_to_check {
             return Item::EmptySeat;
         }
         self.clone()
@@ -119,62 +102,6 @@ impl Grid {
             height,
             width,
         }
-    }
-    pub fn get_nb_adjacent_seats(&self, coordinates: (usize, usize), seat: Item) -> u32 {
-        let i_coordinates: (isize, isize) = (coordinates.0 as isize, coordinates.1 as isize);
-        vec![
-            (i_coordinates.0 - 1, i_coordinates.1 - 1),
-            (i_coordinates.0 - 1, i_coordinates.1),
-            (i_coordinates.0 - 1, i_coordinates.1 + 1),
-            (i_coordinates.0, i_coordinates.1 - 1),
-            (i_coordinates.0, i_coordinates.1 + 1),
-            (i_coordinates.0 + 1, i_coordinates.1),
-            (i_coordinates.0 + 1, i_coordinates.1 + 1),
-            (i_coordinates.0 + 1, i_coordinates.1 - 1),
-        ]
-        .iter()
-        .filter(|(x, y)| {
-            *x >= 0 && *y >= 0 && *x < self.height as isize && *y < self.width as isize
-        })
-        .filter(|c_coordinates| {
-            self.rows[c_coordinates.0 as usize][c_coordinates.1 as usize] == seat
-        })
-        .count() as u32
-    }
-
-    pub fn get_first_adjacent_seats(&self, coordinates: (usize, usize), seat: Item) -> u32 {
-        let mut seats = Vec::new();
-
-        for y in -1..2 {
-            for x in -1..2 {
-                if x == y && x == 0 {
-                    continue;
-                }
-                let (mut c_y, mut c_x) = (coordinates.0 as isize + y, coordinates.1 as isize + x);
-                while c_x >= 0
-                    && c_y >= 0
-                    && c_x < self.width as isize
-                    && c_y < self.height as isize
-                {
-                    let c_item = self.rows[c_y as usize][c_x as usize].clone();
-                    if c_item != Item::Floor {
-                        seats.push(c_item);
-                        break;
-                    }
-                    c_y += y;
-                    c_x += x;
-                }
-            }
-        }
-
-        seats.iter().fold(0u32, |mut sum, c_seat| {
-            if *c_seat == seat {
-                sum += 1;
-                return sum;
-            } else {
-                return sum;
-            }
-        })
     }
 
     pub fn count_seats(&self, seat: Item) -> u32 {
@@ -222,4 +149,50 @@ pub fn run_while_no_diff(
         g = run_round(g, nb_seats_to_check, prediction_method);
     }
     g
+}
+
+fn get_nb_adjacent_seats(grid: &Grid, coordinates: (usize, usize), seat: Item) -> u32 {
+    let i_coordinates: (isize, isize) = (coordinates.0 as isize, coordinates.1 as isize);
+    // Generate all the coordinates
+    vec![
+        (i_coordinates.0 - 1, i_coordinates.1 - 1),
+        (i_coordinates.0 - 1, i_coordinates.1),
+        (i_coordinates.0 - 1, i_coordinates.1 + 1),
+        (i_coordinates.0, i_coordinates.1 - 1),
+        (i_coordinates.0, i_coordinates.1 + 1),
+        (i_coordinates.0 + 1, i_coordinates.1),
+        (i_coordinates.0 + 1, i_coordinates.1 + 1),
+        (i_coordinates.0 + 1, i_coordinates.1 - 1),
+    ]
+    .iter()
+    .filter(|(x, y)| *x >= 0 && *y >= 0 && *x < grid.height as isize && *y < grid.width as isize)
+    .filter(|c_coordinates| grid.rows[c_coordinates.0 as usize][c_coordinates.1 as usize] == seat)
+    .count() as u32
+}
+
+pub fn get_first_adjacent_seats(grid: &Grid, coordinates: (usize, usize), seat: Item) -> u32 {
+    let mut sum = 0;
+    // Generate all the coordinates + checks
+    for y in -1..2 {
+        for x in -1..2 {
+            // Do not check the current item...
+            if x == y && x == 0 {
+                continue;
+            }
+            let (mut c_y, mut c_x) = (coordinates.0 as isize + y, coordinates.1 as isize + x);
+            // Check that the coordinates are valid
+            while c_x >= 0 && c_y >= 0 && c_x < grid.width as isize && c_y < grid.height as isize {
+                let c_item = grid.rows[c_y as usize][c_x as usize].clone();
+                if c_item != Item::Floor {
+                    if c_item == seat {
+                        sum += 1;
+                    }
+                    break;
+                }
+                c_y += y;
+                c_x += x;
+            }
+        }
+    }
+    sum
 }

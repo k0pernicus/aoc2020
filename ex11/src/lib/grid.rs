@@ -49,7 +49,7 @@ impl Item {
                 coordinates,
                 nb_seats_to_check,
                 grid,
-                get_first_adjacent_seats,
+                get_nb_first_adjacent_seats,
             ),
         }
     }
@@ -104,12 +104,12 @@ impl Grid {
         }
     }
 
-    pub fn count_seats(&self, seat: Item) -> u32 {
+    pub fn count_items(&self, item: Item) -> u32 {
         self.rows
             .iter()
             .map(|row| {
-                row.iter().fold(0u32, |mut sum, c_seat| {
-                    if *c_seat == seat {
+                row.iter().fold(0u32, |mut sum, c_item| {
+                    if *c_item == item {
                         sum += 1;
                         return sum;
                     }
@@ -170,7 +170,7 @@ fn get_nb_adjacent_seats(grid: &Grid, coordinates: (usize, usize), seat: Item) -
     .count() as u32
 }
 
-pub fn get_first_adjacent_seats(grid: &Grid, coordinates: (usize, usize), seat: Item) -> u32 {
+pub fn get_nb_first_adjacent_seats(grid: &Grid, coordinates: (usize, usize), seat: Item) -> u32 {
     let mut sum = 0;
     // Generate all the coordinates + checks
     for y in -1..2 {

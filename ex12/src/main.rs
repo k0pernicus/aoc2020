@@ -43,17 +43,8 @@ fn main() {
     let waypoint = grid::Point::new(10, 1);
     grid = grid::Grid::new(Some(waypoint));
     for instruction in instructions.iter() {
-        if instruction.is_rotate() {
-            println!("> {}", instruction);
-            println!("Before: {:?}", grid);
-        }
         grid.compute_next_step(instruction);
-        if instruction.is_rotate() {
-            println!("After: {:?}", grid);
-            println!("=========================");
-        }
     }
-    println!("The position of the ship is {:?}", grid.get_ship_point());
     println!(
         "The manhattan distance for Step 2 is {}",
         grid.compute_manhattan_distance()

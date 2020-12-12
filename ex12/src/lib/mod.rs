@@ -126,3 +126,9 @@ impl fmt::Display for Instruction {
         write!(f, "{}{}", self.0, self.1)
     }
 }
+
+impl Instruction {
+    pub fn is_rotate(&self) -> bool {
+        (self.0 == Direction::Left) || (self.0 == Direction::Right)
+    }
+}

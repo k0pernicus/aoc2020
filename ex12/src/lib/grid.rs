@@ -108,10 +108,6 @@ impl Grid {
         let mut tmp_direction = waypoint.current_direction.clone();
         match &instruction.0 {
             d @ Direction::Left | d @ Direction::Right => {
-                let mut angle = instruction.1;
-                if *d == Direction::Left {
-                    angle = angle * -1;
-                }
                 waypoint.rotate_around(d, instruction.1);
                 self.waypoint = Some(waypoint);
                 return;

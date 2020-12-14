@@ -1,13 +1,9 @@
-use super::Instruction;
 use bit_array::BitArray;
 use typenum::U36;
 
-pub fn get_bit_array(instruction: &Instruction) -> BitArray<u32, U36> {
+pub fn get_bit_array(value: usize) -> BitArray<u32, U36> {
     let mut bit_array = BitArray::new();
-    let binary_value = format!("{:b}", instruction.value)
-        .chars()
-        .rev()
-        .collect::<String>();
+    let binary_value = format!("{:b}", value).chars().rev().collect::<String>();
     for (index, bin) in binary_value.chars().enumerate() {
         bit_array.set(
             //index + instruction.memory_address,

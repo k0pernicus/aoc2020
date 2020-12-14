@@ -6,7 +6,6 @@ pub fn get_bit_array(value: usize) -> BitArray<u32, U36> {
     let binary_value = format!("{:b}", value).chars().rev().collect::<String>();
     for (index, bin) in binary_value.chars().enumerate() {
         bit_array.set(
-            //index + instruction.memory_address,
             36 - (index + 1),
             match bin {
                 '1' => true,

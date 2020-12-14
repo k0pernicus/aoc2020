@@ -36,9 +36,7 @@ fn main() {
     for (mask, instructions) in program_instructions.iter() {
         for instruction in instructions.iter() {
             let bit_array = compute::get_bit_array(instruction.value);
-            println!("> Instruction: {:?}", bit_array);
             let bit_array_with_mask = mask.first_part_decode(bit_array);
-            println!(">> After applying the mask: {:?}", bit_array_with_mask);
             let bit_array_with_mask_digit = compute::to_digit(&bit_array_with_mask);
             if !memory_addresses.contains_key(&instruction.memory_address) {
                 memory_addresses.insert(instruction.memory_address, bit_array_with_mask_digit);
@@ -50,26 +48,22 @@ fn main() {
         }
     }
     println!(
-        "The sum of all non-zero memory addresses is {}",
+        "The sum of all non-zero memory addresses, for part 1, is {}",
         memory_addresses.values().sum::<isize>()
     );
 
     println!("#################");
 
     // Second part
-    // let mut sum = 0;
     memory_addresses.clear();
     for (mask, instructions) in program_instructions {
         for instruction in instructions.iter() {
-            let bit_array = compute::get_bit_array(instruction.value);
-            println!("> Instruction: {:?}", bit_array);
             let memory_address_as_bit_array = compute::get_bit_array(instruction.memory_address);
             let shuffled_memory_addresses = mask
                 .second_part_decode(memory_address_as_bit_array)
                 .iter()
                 .map(|address| compute::to_digit(&address) as usize)
                 .collect::<Vec<usize>>();
-            println!(">> Memory addresses: {:?}", shuffled_memory_addresses);
             for shuffled_memory_address in shuffled_memory_addresses.iter() {
                 if !memory_addresses.contains_key(shuffled_memory_address) {
                     memory_addresses.insert(*shuffled_memory_address, instruction.value as isize);
@@ -79,11 +73,9 @@ fn main() {
                 }
             }
         }
-        // sum += memory_addresses.values().sum::<isize>();
-        // memory_addresses.clear();
     }
     println!(
-        "The sum of all non-zero memory addresses is {}",
+        "The sum of all non-zero memory addresses, for part 2, is {}",
         memory_addresses.values().sum::<isize>()
     );
 }

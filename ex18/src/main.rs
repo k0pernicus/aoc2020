@@ -22,12 +22,15 @@ fn main() {
     if raw_input.len() == 0 {
         println!("Input file is empty");
         process::exit(0);
-    } else if raw_input.len() > 1 {
-        println!("Input file must be equals to one line of inputs");
-        process::exit(0);
     }
-    println!(
-        "Result of the expression: {}",
-        expr::evaluate_expression(raw_input[0].as_str())
-    );
+    // Part 1
+    let sum_expr = raw_input.iter().fold(0isize, |acc, expression| {
+        acc + expr::evaluate_expression(expression, true)
+    });
+    println!("The sum of all expressions for part 1 is {}", sum_expr);
+    // Part 2
+    let sum_expr = raw_input.iter().fold(0isize, |acc, expression| {
+        acc + expr::evaluate_expression(expression, false)
+    });
+    println!("The sum of all expressions for part 2 is {}", sum_expr);
 }

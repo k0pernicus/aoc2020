@@ -1,62 +1,181 @@
 use std::collections::VecDeque;
 use std::ops;
-use std::process;
 
-fn find_sub_expression<'a>(expr: &'a str) -> &'a str {
-    println!("subexpr: {}", expr);
-    if expr.len() == 0 {
-        return "0";
-    }
-    let mut parenthesis_deque: VecDeque<char> = VecDeque::new();
-    let mut end_index = 0usize;
-    for (index, c) in expr.chars().enumerate() {
+fn get_end_index_of_expression(s: &str) -> usize {
+    let mut parenthesis_match: usize = 0;
+    let mut index: usize = 0;
+    for c in s.chars() {
         match c {
-            '(' => parenthesis_deque.push_back('('),
+            '(' => {
+                parenthesis_match += 1;
+            }
             ')' => {
-                if parenthesis_deque.is_empty() {
-                    end_index = index;
+                parenthesis_match -= 1;
+                if parenthesis_match <= 0 {
+                    index += 1;
                     break;
                 }
-                parenthesis_deque.pop_back();
             }
             _ => {}
         }
+        index += 1;
     }
-    &expr[..end_index]
+    index
 }
 
-pub fn evaluate_expression(expr: &str) -> i32 {
-    let c_expr = expr.clone();
-    let c_expr = c_expr.replace("(", " ( ");
-    let c_expr = c_expr.replace(")", " ) ");
-    let tokens = c_expr.split_ascii_whitespace();
-    let mut sum = 0i32;
-    let mut c_ops: Option<fn(i32, i32) -> i32> = None;
-    for (index, token) in tokens.into_iter().enumerate() {
-        println!("Token {}", token);
-        match token {
-            "+" => c_ops = Some(ops::Add::add),
-            "-" => c_ops = Some(ops::Sub::sub),
-            "*" => c_ops = Some(ops::Mul::mul),
-            "/" => c_ops = Some(ops::Div::div),
-            "(" => {
-                let subexpr = tokens.clone();
-                let found_subexpr = find_sub_expression(&subexpr);
-                let evaluate_subexpr = evaluate_expression(found_subexpr);
-                sum += evaluate_subexpr;
-            }
-            ")" => {}
-            _ => match c_ops {
-                Some(operator) => sum = operator(sum, token.parse::<i32>().unwrap()),
-                None => {
-                    if index != 0 {
-                        println!("Parsing error: expected an error, got None...");
-                        process::exit(1);
-                    }
-                    sum = token.parse::<i32>().unwrap();
-                }
-            },
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum Op {
+    Add,
+    Mul,
+}
+
+impl Op {
+    fn get_fn(&self) -> fn(isize, isize) -> isize {
+        match self {
+            Self::Add => ops::Add::add,
+            Self::Mul => ops::Mul::mul,
         }
     }
-    sum
+    pub fn compute(&self, left: isize, right: isize) -> isize {
+        let f = self.get_fn();
+        f(left, right)
+    }
+}
+
+pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
+    // println!("NEW EVALUATION!");
+    // println!("###############");
+    let mut acc = String::from("");
+    let mut ops: VecDeque<Op> = VecDeque::new();
+    let mut values: VecDeque<isize> = VecDeque::new();
+    let mut index = 0usize;
+    let mut meet_nb = false;
+    loop {
+        if index >= s.len() {
+            break;
+        }
+        let c = s.chars().nth(index).unwrap();
+        // println!("> {}", c);
+        match c {
+            '+' => {
+                ops.push_back(Op::Add);
+                meet_nb = false;
+            }
+            '*' => {
+                ops.push_back(Op::Mul);
+                meet_nb = false;
+            }
+            '(' => {
+                let end_index = get_end_index_of_expression(&s[index..]) + index;
+                // print!("Found expression {}... ", &s[index..end_index]);
+                let result_of_expression =
+                    evaluate_expression(&s[index + 1..end_index - 1], same_precedence_level);
+                meet_nb = true;
+                // println!("Result of expression: {}", result_of_expression);
+                if !ops.is_empty()
+                    && values.len() >= 1
+                    && (same_precedence_level || (*ops.back().unwrap() == Op::Add && meet_nb))
+                {
+                    let left_operand = values.pop_back().unwrap();
+                    let operator = ops.pop_back().unwrap();
+                    values.push_back(operator.compute(left_operand, result_of_expression));
+                } else {
+                    values.push_back(result_of_expression);
+                }
+                index = end_index;
+            }
+            ')' => {
+                meet_nb = true;
+            }
+            ' ' => {
+                if !acc.is_empty() {
+                    values.push_back(acc.parse::<isize>().unwrap());
+                    acc.clear();
+                }
+                if !ops.is_empty() && values.len() >= 2 {
+                    if same_precedence_level || (*ops.back().unwrap() == Op::Add && meet_nb) {
+                        let right_operand = values.pop_back().unwrap();
+                        let left_operand = values.pop_back().unwrap();
+                        let operator = ops.pop_back().unwrap();
+                        // let result = operator.compute(left_operand, right_operand);
+                        // println!("Pushing back {}", result);
+                        values.push_back(operator.compute(left_operand, right_operand));
+                    }
+                }
+            }
+            _ => {
+                // println!("Pushing {}", c);
+                acc.push(c);
+                meet_nb = true;
+            }
+        }
+        index += 1;
+    }
+    if acc.is_empty() && ops.is_empty() {
+        // println!(">>> acc is empty, returning {}", values.back().unwrap());
+        return values.pop_back().unwrap();
+    }
+    if !acc.is_empty() {
+        values.push_back(acc.parse::<isize>().unwrap());
+    }
+    let mut right_operand = values.pop_back().unwrap();
+    while !ops.is_empty() {
+        let operator = ops.pop_back().unwrap();
+        let left_operand = values.pop_back().unwrap();
+        // println!(
+        //     "{} {:?} {} => {}",
+        //     left_operand,
+        //     operator,
+        //     right_operand,
+        //     operator.compute(left_operand, right_operand)
+        // );
+        right_operand = operator.compute(left_operand, right_operand);
+    }
+    // println!(">>> Returning {}", right_operand);
+    return right_operand;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::evaluate_expression;
+    #[test]
+    fn test_evaluate_expression_same_precedence() {
+        assert_eq!(evaluate_expression("1 + 2 * 3 + 4 * 5 + 6", true), 71);
+        assert_eq!(evaluate_expression("1 + (2 * 3) + (4 * (5 + 6))", true), 51);
+        assert_eq!(evaluate_expression("2 * 3 + (4 * 5)", true), 26);
+        assert_eq!(
+            evaluate_expression("5 + (8 * 3 + 9 + 3 * 4 * 3)", true),
+            437
+        );
+        assert_eq!(
+            evaluate_expression("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true),
+            12240
+        );
+        assert_eq!(
+            evaluate_expression("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true),
+            13632
+        );
+    }
+
+    #[test]
+    fn test_evaluate_expression_add_precedence() {
+        assert_eq!(evaluate_expression("1 + 2 * 3 + 4 * 5 + 6", false), 231);
+        assert_eq!(
+            evaluate_expression("1 + (2 * 3) + (4 * (5 + 6))", false),
+            51
+        );
+        assert_eq!(evaluate_expression("2 * 3 + (4 * 5)", false), 46);
+        assert_eq!(
+            evaluate_expression("5 + (8 * 3 + 9 + 3 * 4 * 3)", false),
+            1445
+        );
+        assert_eq!(
+            evaluate_expression("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false),
+            669060
+        );
+        assert_eq!(
+            evaluate_expression("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false),
+            23340
+        );
+    }
 }

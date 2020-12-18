@@ -47,7 +47,7 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
     let mut ops: VecDeque<Op> = VecDeque::new();
     let mut values: VecDeque<isize> = VecDeque::new();
     let mut index = 0usize;
-    let mut meet_nb = false;
+    let mut met_expr = false;
     loop {
         if index >= s.len() {
             break;
@@ -56,20 +56,20 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
         match c {
             '+' => {
                 ops.push_back(Op::Add);
-                meet_nb = false;
+                met_expr = false;
             }
             '*' => {
                 ops.push_back(Op::Mul);
-                meet_nb = false;
+                met_expr = false;
             }
             '(' => {
                 let end_index = get_end_index_of_expression(&s[index..]) + index;
                 let result_of_expression =
                     evaluate_expression(&s[index + 1..end_index - 1], same_precedence_level);
-                meet_nb = true;
+                met_expr = true;
                 if !ops.is_empty()
                     && values.len() >= 1
-                    && (same_precedence_level || (*ops.back().unwrap() == Op::Add && meet_nb))
+                    && (same_precedence_level || (*ops.back().unwrap() == Op::Add && met_expr))
                 {
                     let left_operand = values.pop_back().unwrap();
                     let operator = ops.pop_back().unwrap();
@@ -80,7 +80,7 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
                 index = end_index;
             }
             ')' => {
-                meet_nb = true;
+                met_expr = true;
             }
             ' ' => {
                 if !acc.is_empty() {
@@ -88,7 +88,7 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
                     acc.clear();
                 }
                 if !ops.is_empty() && values.len() >= 2 {
-                    if same_precedence_level || (*ops.back().unwrap() == Op::Add && meet_nb) {
+                    if same_precedence_level || (*ops.back().unwrap() == Op::Add && met_expr) {
                         let right_operand = values.pop_back().unwrap();
                         let left_operand = values.pop_back().unwrap();
                         let operator = ops.pop_back().unwrap();
@@ -98,7 +98,7 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
             }
             _ => {
                 acc.push(c);
-                meet_nb = true;
+                met_expr = true;
             }
         }
         index += 1;

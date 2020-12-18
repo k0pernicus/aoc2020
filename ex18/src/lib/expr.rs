@@ -43,8 +43,6 @@ impl Op {
 }
 
 pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
-    // println!("NEW EVALUATION!");
-    // println!("###############");
     let mut acc = String::from("");
     let mut ops: VecDeque<Op> = VecDeque::new();
     let mut values: VecDeque<isize> = VecDeque::new();
@@ -55,7 +53,6 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
             break;
         }
         let c = s.chars().nth(index).unwrap();
-        // println!("> {}", c);
         match c {
             '+' => {
                 ops.push_back(Op::Add);
@@ -67,11 +64,9 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
             }
             '(' => {
                 let end_index = get_end_index_of_expression(&s[index..]) + index;
-                // print!("Found expression {}... ", &s[index..end_index]);
                 let result_of_expression =
                     evaluate_expression(&s[index + 1..end_index - 1], same_precedence_level);
                 meet_nb = true;
-                // println!("Result of expression: {}", result_of_expression);
                 if !ops.is_empty()
                     && values.len() >= 1
                     && (same_precedence_level || (*ops.back().unwrap() == Op::Add && meet_nb))
@@ -97,14 +92,11 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
                         let right_operand = values.pop_back().unwrap();
                         let left_operand = values.pop_back().unwrap();
                         let operator = ops.pop_back().unwrap();
-                        // let result = operator.compute(left_operand, right_operand);
-                        // println!("Pushing back {}", result);
                         values.push_back(operator.compute(left_operand, right_operand));
                     }
                 }
             }
             _ => {
-                // println!("Pushing {}", c);
                 acc.push(c);
                 meet_nb = true;
             }
@@ -112,7 +104,6 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
         index += 1;
     }
     if acc.is_empty() && ops.is_empty() {
-        // println!(">>> acc is empty, returning {}", values.back().unwrap());
         return values.pop_back().unwrap();
     }
     if !acc.is_empty() {
@@ -122,16 +113,8 @@ pub fn evaluate_expression(s: &str, same_precedence_level: bool) -> isize {
     while !ops.is_empty() {
         let operator = ops.pop_back().unwrap();
         let left_operand = values.pop_back().unwrap();
-        // println!(
-        //     "{} {:?} {} => {}",
-        //     left_operand,
-        //     operator,
-        //     right_operand,
-        //     operator.compute(left_operand, right_operand)
-        // );
         right_operand = operator.compute(left_operand, right_operand);
     }
-    // println!(">>> Returning {}", right_operand);
     return right_operand;
 }
 

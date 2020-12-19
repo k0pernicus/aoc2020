@@ -1,6 +1,8 @@
 use super::Rules;
 use std::collections::{HashMap, HashSet, VecDeque};
 
+const LIMIT_RECURSION: usize = 6;
+
 struct ParsedRule {
     id: usize,
     leaves_used: HashSet<usize>,
@@ -111,7 +113,7 @@ pub fn parse_rules(raw_rules: Vec<String>, infinite_rules: Option<HashSet<usize>
                 let left_part = leaves_match.get(&42).unwrap().clone();
                 let right_part = leaves_match.get(&31).unwrap().clone();
                 let mut re = String::from("(:?");
-                for i in 0..6 {
+                for i in 0..LIMIT_RECURSION {
                     if i == 0 {
                         re.push_str(format!("(:?{}{})", left_part, right_part).as_str());
                         continue;

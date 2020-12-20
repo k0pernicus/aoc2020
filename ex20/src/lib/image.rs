@@ -58,26 +58,6 @@ impl Image {
         Ok(image)
     }
 
-    pub fn get_corners(&self) -> HashSet<(usize, usize)> {
-        let mut cases = self.filled_case.clone();
-        cases.retain(|(y, x)| {
-            (*y == (self.length - 1) || *y == 0) || (*x == (self.length - 1) || *x == 0)
-        });
-        cases
-    }
-
-    pub fn rotate_right(&self) -> Image {
-        Image {
-            id: self.id,
-            length: self.length,
-            filled_case: self
-                .filled_case
-                .iter()
-                .map(|(y, x)| (*x, self.length - 1 - *y))
-                .collect(),
-        }
-    }
-
     pub fn rotate_left(&self) -> Image {
         Image {
             id: self.id,
@@ -161,7 +141,7 @@ impl Image {
     pub fn get_combinations(&self) -> Vec<Image> {
         let mut combinations: Vec<Image> = Vec::new();
         let mut c_image = self.clone();
-        for i in 0..5 {
+        for _ in 0..4 {
             combinations.push(c_image.clone());
             combinations.push(c_image.flip_horizontal());
             combinations.push(c_image.flip_vertical());

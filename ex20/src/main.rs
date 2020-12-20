@@ -6,7 +6,6 @@ extern crate lazy_static;
 use aoc_helper::commandline::AOCApp;
 use aoc_helper::file;
 
-use std::collections::{HashMap, HashSet};
 use std::process;
 
 #[macro_use]
@@ -31,23 +30,18 @@ fn main() {
     let images_ids = images.keys();
     let mut positions = lib::Positions::new();
     // Compute the combinations
-    for (i, id) in images_ids.enumerate() {
+    for id in images_ids {
         let c_image = images.get(id).unwrap();
         let c_image_combinations = c_image.get_combinations();
         for (c_image_combination_index, c_image_combination) in
             c_image_combinations.iter().enumerate()
         {
-            let mut is_match = false;
             for (other_image_id, other_image) in images.iter() {
                 if id == other_image_id {
                     continue;
                 }
                 let combinations = other_image.get_combinations();
                 for (combination_index, combination) in combinations.iter().enumerate() {
-                    // println!("Tried to match...");
-                    // println!("{}", c_image_combination);
-                    // println!("{}", combination);
-
                     if c_image_combination
                         .match_with_existing_corners(image::CORNER::TOP, &combination)
                     {
@@ -58,7 +52,6 @@ fn main() {
                             combination_index,
                             image::CORNER::TOP,
                         );
-                        is_match = true;
                         break;
                     }
                 }
@@ -73,7 +66,6 @@ fn main() {
                             combination_index,
                             image::CORNER::BOTTOM,
                         );
-                        is_match = true;
                         break;
                     }
                 }
@@ -88,7 +80,6 @@ fn main() {
                             combination_index,
                             image::CORNER::LEFT,
                         );
-                        is_match = true;
                         break;
                     }
                 }
@@ -103,7 +94,6 @@ fn main() {
                             combination_index,
                             image::CORNER::RIGHT,
                         );
-                        is_match = true;
                         break;
                     }
                 }

@@ -110,17 +110,9 @@ fn main() {
             }
         }
     }
-    let ok_positions = positions.draw();
-    let mut nb_positions_per_case: HashMap<usize, HashSet<usize>> = HashMap::new();
-    for ok_hashset in ok_positions.iter() {
-        for (id, positions) in ok_hashset.iter() {
-            nb_positions_per_case
-                .entry(positions.len())
-                .or_insert(HashSet::new())
-                .insert(*id);
-        }
-    }
-    let corners = nb_positions_per_case.get(&2).unwrap();
-    let mul = corners.iter().fold(1usize, |acc, value| acc * value);
-    println!("{:?} -> {}", corners, mul);
+    let (corners, mul) = positions.solve_part_1();
+    println!(
+        "The corners of the image are {:?}, the multiplication is {}",
+        corners, mul
+    );
 }

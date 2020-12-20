@@ -5,12 +5,14 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub struct Positions {
     hash: HashMap<(usize, usize), HashMap<(usize, usize), image::CORNER>>,
+    combinations: Vec<HashMap<usize, HashSet<image::CORNER>>>,
 }
 
 impl Positions {
     pub fn new() -> Self {
         Positions {
             hash: HashMap::new(),
+            combinations: Vec::new(),
         }
     }
     pub fn add_position(
@@ -27,8 +29,7 @@ impl Positions {
             .entry((b, b_dim))
             .or_insert(direction);
     }
-    pub fn draw(&self) -> Vec<HashMap<usize, HashSet<image::CORNER>>> {
-        let mut ok = Vec::new();
+    fn combine_images(&mut self) {
         for ((a, a_dim), other_cards) in self.hash.iter() {
             let mut to_visit: VecDeque<(usize, usize)> = VecDeque::new();
             let mut visited: VecDeque<(usize, usize)> = VecDeque::new();
@@ -64,8 +65,22 @@ impl Positions {
             if is_not_correct {
                 continue;
             }
-            ok.push(directions);
+            self.combinations.push(directions);
         }
-        ok
+    }
+    pub fn solve_part_1(&mut self) -> (HashSet<usize>, usize) {
+        self.combine_images();
+        let mut nb_positions_per_case: HashMap<usize, HashSet<usize>> = HashMap::new();
+        for ok_hashset in self.combinations.iter() {
+            for (id, positions) in ok_hashset.iter() {
+                nb_positions_per_case
+                    .entry(positions.len())
+                    .or_insert(HashSet::new())
+                    .insert(*id);
+            }
+        }
+        let corners = nb_positions_per_case.get(&2).unwrap().clone();
+        let mul = corners.iter().fold(1usize, |acc, value| acc * value);
+        (corners, mul)
     }
 }

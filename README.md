@@ -14,3 +14,26 @@ Please to use the **release** version of each binary, in order to get significan
 for each exercise: `cargo build --release`.
 
 Each exercise binary is a CLI - if you want to know the argument(s) to provide: `./target/release/ex<> --help`.
+
+## Exercices
+
+* Ex01 ✔️ - ✔️
+* Ex02 ✔️ - ✔️
+* Ex03 ✔️ - ✔️
+* Ex04 ✔️ - ✔️
+* Ex05 ✔️ - ✔️
+* Ex06 ✔️ - ✔️
+* Ex07 ✔️ - ✔️
+* Ex08 ✔️ - ✔️
+* Ex09 ✔️ - ✔️
+* Ex10 ✔️ - ✔️
+* Ex11 ✔️ - ✔️
+* Ex12 ✔️ - ✔️
+* Ex13 ✔️ - ✔️
+* Ex14 ✔️ - ✔️
+* Ex15 ✔️ - ✔️
+* Ex16 ✔️ - ✔️
+* Ex17 ✔️ - ✔️
+* Ex18 ✔️ - ✔️
+* Ex19 ✔️ - ✔️
+* Ex20 ✔️ - ❌

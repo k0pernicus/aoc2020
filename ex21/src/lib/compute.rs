@@ -25,16 +25,11 @@ pub fn solve_part_1_and_2(foods: &Vec<Food>) -> (HashMap<String, usize>, BTreeMa
     let mut found = false;
     let mut ingredients_with_allergenes = HashSet::<String>::new();
     let mut ingredients_per_allergene: BTreeMap<String, String> = BTreeMap::new();
-    let mut i = 0;
-    loop {
-        if found || i > 5 {
-            break;
-        }
-        i += 1;
+    while !found {
         found = true;
-        for (allergene, possible_ingredients) in allergens.iter() {
-            let max = possible_ingredients.values().max().unwrap();
-            let mut possible_ingredients: Vec<String> = possible_ingredients
+        for (allergene, all_possible_ingredients) in allergens.iter() {
+            let max = all_possible_ingredients.values().max().unwrap();
+            let mut possible_ingredients: Vec<String> = all_possible_ingredients
                 .iter()
                 .filter_map(|(ingredient, value)| {
                     if value == max {
@@ -53,6 +48,16 @@ pub fn solve_part_1_and_2(foods: &Vec<Food>) -> (HashMap<String, usize>, BTreeMa
                     .insert(allergene.clone(), possible_ingredients[0].clone());
                 continue;
             } else if possible_ingredients.len() > 1 {
+                // Don't compute twice the same keys
+                let mut new_possible_ingredients = HashMap::<String, usize>::new();
+                for (ingredient, _) in all_possible_ingredients.clone() {
+                    if !possible_ingredients.contains(&ingredient) {
+                        new_possible_ingredients.insert(
+                            ingredient.clone(),
+                            *all_possible_ingredients.get(&ingredient).unwrap(),
+                        );
+                    }
+                }
                 found = false;
             }
         }

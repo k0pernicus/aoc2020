@@ -26,12 +26,6 @@ impl Default for Ingredients {
     }
 }
 
-impl Ingredients {
-    pub fn len(&self) -> usize {
-        self.0.len()
-    }
-}
-
 #[derive(Debug)]
 pub struct Allergens(HashSet<String>);
 

@@ -37,3 +37,5 @@ Each exercise binary is a CLI - if you want to know the argument(s) to provide: 
 * Ex18 ✔️ - ✔️
 * Ex19 ✔️ - ✔️
 * Ex20 ✔️ - ❌
+* Ex21 ✔️ - ✔️
+* Ex22 ✔️ - ✔️

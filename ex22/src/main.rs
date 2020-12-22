@@ -27,29 +27,31 @@ fn main() {
         println!("Input file is empty");
         process::exit(0);
     }
-    let decks = parser::get_decks(raw_input);
-    // Part 1
-    match decks.clone() {
-        Ok((deque_p1, deque_p2)) => match compute::get_winner_part_1(deque_p1, deque_p2) {
-            Ok((winner, score)) => {
-                println!("Step 1: Player {} won with a score of {}", winner, score)
-            }
-            Err(_) => println!("Exiting..."),
-        },
-        Err(_) => {
-            println!("Exiting...");
-        }
+    let deques = parser::get_deques(raw_input);
+    if deques.is_err() {
+        println!("Error when parsing the inputs");
+        process::exit(1);
     }
-    // Part 2
-    match decks {
-        Ok((deque_p1, deque_p2)) => match compute::get_winner_part_2(deque_p1, deque_p2) {
-            Ok((winner, score)) => {
-                println!("Step 2: Player {} won with a score of {}", winner, score)
-            }
-            Err(_) => println!("Exiting..."),
-        },
+    let deques = deques.unwrap();
+    // Part 1
+    let deques_part_1 = deques.clone();
+    match compute::get_winner_part_1(deques_part_1.0, deques_part_1.1) {
+        Ok((winner, score)) => {
+            println!("Step 1: Player {} won with a score of {}", winner, score)
+        }
         Err(_) => {
             println!("Exiting...");
+            return;
+        }
+    };
+    // Part 2
+    match compute::get_winner_part_2(deques.0, deques.1) {
+        Ok((winner, score)) => {
+            println!("Step 2: Player {} won with a score of {}", winner, score)
+        }
+        Err(_) => {
+            println!("Exiting...");
+            return;
         }
     }
 }

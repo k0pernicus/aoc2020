@@ -28,7 +28,7 @@ fn parse_player(s: &str) -> Option<usize> {
     }
 }
 
-pub fn get_decks(v: Vec<String>) -> Result<(VecDeque<usize>, VecDeque<usize>), ()> {
+pub fn get_deques(v: Vec<String>) -> Result<(VecDeque<usize>, VecDeque<usize>), ()> {
     let mut c_player = 0;
     let mut deque_p1: VecDeque<usize> = VecDeque::new();
     let mut deque_p2: VecDeque<usize> = VecDeque::new();

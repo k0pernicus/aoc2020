@@ -1,14 +1,12 @@
 #[macro_use]
 extern crate aoc_helper;
-extern crate aoc2020_vm;
 
-use aoc2020_vm::virtual_machine;
 use aoc_helper::commandline::AOCApp;
 use aoc_helper::file;
 use std::process;
 
 mod lib;
-use lib::parser;
+use lib::{parser, vm};
 
 fn main() {
     let args = get_app_args!();
@@ -25,15 +23,15 @@ fn main() {
         process::exit(0);
     }
     let instructions = parser::parse_raw_instructions(lines);
-    let mut virtual_machine = virtual_machine::VirtualMachine::new(instructions);
+    let mut virtual_machine = vm::VirtualMachine::new(instructions);
     match virtual_machine.run() {
         Ok(accumulator) => {
             println!("After the run, the accumulator is set to {}", accumulator);
         }
-        Err(virtual_machine::VirtualMachineError::NoneInstruction()) => {
+        Err(vm::VirtualMachineError::NoneInstruction()) => {
             println!("A none instruction has been detected... possibly a parse error, or an error in the input file");
         }
-        Err(virtual_machine::VirtualMachineError::DetectedLoop(instruction_traces)) => {
+        Err(vm::VirtualMachineError::DetectedLoop(instruction_traces)) => {
             println!(
                 "Found a problem - instruction traces: {:?} - trying to debug the sequence...",
                 instruction_traces

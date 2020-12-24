@@ -1,0 +1,16 @@
+[package]
+name = "ex24"
+version = "0.1.0"
+authors = ["k0pernicus"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+
+[dependencies]
+aoc_helper = { path = "../../aoc_helper", version = "0.1.0" }

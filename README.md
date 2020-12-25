@@ -44,3 +44,4 @@ Each exercise binary is a CLI - if you want to know the argument(s) to provide: 
 * Ex22 ✔️ - ✔️
 * Ex23 ✔️ - ✔️
 * Ex24 ✔️ - ✔️
+* Ex25 ✔️ - ✔️

@@ -30,13 +30,13 @@ fn main() {
     grid = grid::run_while_no_diff(grid, 4, &grid::PredictionMethod::SIMPLE);
     println!(
         "The number of occupied seats using simple rules is {}",
-        grid.count_seats(grid::Item::OccupiedSeat)
+        grid.count_items(grid::Item::OccupiedSeat)
     );
     // Second part
     let mut grid = initial_grid.clone();
     grid = grid::run_while_no_diff(grid, 5, &grid::PredictionMethod::COMPLEX);
     println!(
         "The number of occupied seats using complex rules is {}",
-        grid.count_seats(grid::Item::OccupiedSeat)
+        grid.count_items(grid::Item::OccupiedSeat)
     );
 }
